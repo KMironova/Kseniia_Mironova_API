@@ -1,0 +1,10 @@
+# Intellij IDEA files
+.idea
+
+*.iml
+
+target
+
+etc
+
+.log
