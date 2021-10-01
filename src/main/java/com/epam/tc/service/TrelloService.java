@@ -8,33 +8,21 @@ import com.epam.tc.utils.EndPoints;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import org.json.simple.JSONObject;
 
 import static org.apache.http.HttpStatus.SC_OK;
 
-@NoArgsConstructor
+@UtilityClass
 
 public class TrelloService {
-    private static final String BASE_URL = "https://api.trello.com";
-    private static final String BASE_PATH = "1";
+    private static final String BASE_URL = ConfProperties.getProperty("url");
+    private static final String BASE_PATH = ConfProperties.getProperty("path");
 
     public static BoardDto createBoardByName(String boardName) {
-        JSONObject requiredParams = new JSONObject();
-        requiredParams.put("name", boardName);
-        return RestAssured.given(setConfig())
-                          .header("Content-Type","application/json")
-                          .body(requiredParams.toJSONString())
+        return RestAssured.given(setConfigWithJson(getJsonParam(boardName, "name")))
                           .when()
                           .post(EndPoints.Boards.getTitle())
-                          .andReturn().getBody().as(BoardDto.class);
-    }
-
-    public static BoardDto getBoardById(String boardId) {
-        return RestAssured.given(setConfig())
-                          .when()
-                          .pathParams("id", boardId)
-                          .get(EndPoints.BoardById.getTitle())
                           .andReturn().getBody().as(BoardDto.class);
     }
 
@@ -55,12 +43,7 @@ public class TrelloService {
     }
 
     public static void createListOnBoard(String boardId, String listName) {
-        JSONObject requiredParams = new JSONObject();
-        requiredParams.put("name", listName);
-
-        RestAssured.given(setConfig())
-                   .header("Content-Type","application/json")
-                   .body(requiredParams.toJSONString())
+        RestAssured.given(setConfigWithJson(getJsonParam(listName, "name")))
                    .when()
                    .pathParams("id", boardId)
                    .post(EndPoints.ListsFromBoard.getTitle())
@@ -77,11 +60,7 @@ public class TrelloService {
     }
 
     public static void createLabelOnBoard(String boardId, String labelName) {
-        JSONObject requiredParams = new JSONObject();
-        requiredParams.put("name", labelName);
-        RestAssured.given(setConfig())
-                   .header("Content-Type","application/json")
-                   .body(requiredParams.toJSONString())
+        RestAssured.given(setConfigWithJson(getJsonParam(labelName, "name")))
                    .when()
                    .pathParams("id", boardId)
                    .post(EndPoints.LabelsFromBoard.getTitle())
@@ -90,11 +69,7 @@ public class TrelloService {
     }
 
     public static void updateBoardName(String boardId, String newBoardName) {
-        JSONObject requiredParams = new JSONObject();
-        requiredParams.put("name", newBoardName);
-        RestAssured.given(setConfig())
-                   .header("Content-Type","application/json")
-                   .body(requiredParams.toJSONString())
+        RestAssured.given(setConfigWithJson(getJsonParam(newBoardName,"name")))
                    .when()
                    .pathParams("id", boardId)
                    .put(EndPoints.BoardById.getTitle())
@@ -111,11 +86,7 @@ public class TrelloService {
     }
 
     public static void updateLabelColor (String labelId, String color) {
-        JSONObject requiredParams = new JSONObject();
-        requiredParams.put("color", color);
-        RestAssured.given(setConfig())
-                   .header("Content-Type","application/json")
-                   .body(requiredParams.toJSONString())
+        RestAssured.given(setConfigWithJson(getJsonParam(color,"color")))
                    .when()
                    .pathParams("id", labelId)
                    .put(EndPoints.LabelByIdFromBoard.getTitle())
@@ -130,5 +101,22 @@ public class TrelloService {
             .addQueryParam("key", ConfProperties.getProperty("key"))
             .addQueryParam("token", ConfProperties.getProperty("token"))
             .build();
+    }
+
+    private static RequestSpecification setConfigWithJson(String json) {
+        return new RequestSpecBuilder()
+            .setBaseUri(BASE_URL)
+            .setBasePath(BASE_PATH)
+            .addQueryParam("key", ConfProperties.getProperty("key"))
+            .addQueryParam("token", ConfProperties.getProperty("token"))
+            .setBody(json)
+            .setContentType("application/json")
+            .build();
+    }
+
+    public static String getJsonParam(String requirements, String reqName) {
+        JSONObject requiredParams = new JSONObject();
+        requiredParams.put(reqName, requirements);
+        return requiredParams.toJSONString();
     }
 }
