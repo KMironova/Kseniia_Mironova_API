@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "ad06c717-03d8-4861-a7dd-cee058f508d3",
+		"name": "Trello CRUD Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Board CRUD",
+			"item": [
+				{
+					"name": "Get all boards ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"First Board\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/members/me/boards?key={{key_value}}&token={{token_value}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"members",
+								"me",
+								"boards"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key_value}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Board was created\", function () {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.expect(jsonData.name).to.eq(\"new board\");\r",
+									"});\r",
+									"var id;\r",
+									"pm.test(\"Get board id\", function () {\r",
+									"    pm.response.to.be.withBody;\r",
+									"    const jsonData = pm.response.json();\r",
+									"    id = jsonData.id;\r",
+									"})\r",
+									"\r",
+									"pm.environment.set(\"board_id\", id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"new board\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/boards?key={{key_value}}&token={{token_value}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"boards"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key_value}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upgrade board name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Board name was update\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.eql(\"[update]\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"[update]\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/boards/{{board_id}}?key={{key_value}}&token={{token_value}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"boards",
+								"{{board_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key_value}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"var id;\r",
+									"pm.test(\"Set list id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    id = jsonData.id;\r",
+									"});\r",
+									"pm.environment.set(\"list_id\", id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"new list\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/boards/{{board_id}}/lists?key={{key_value}}&token={{token_value}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"",
+								"boards",
+								"{{board_id}}",
+								"lists"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key_value}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"List name was update\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.name).to.include(\"[update]\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"[update] name list\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/lists/{{list_id}}?key={{key_value}}&token={{token_value}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"lists",
+								"{{list_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key_value}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete board",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Board was deleted\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"null\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/boards/{{board_id}}?key={{key_value}}&token={{token_value}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"boards",
+								"{{board_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{key_value}}"
+								},
+								{
+									"key": "token",
+									"value": "{{token_value}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
