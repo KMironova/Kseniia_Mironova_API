@@ -13,9 +13,10 @@ public class AssertionSteps {
         for (BoardDto ld : boardDtos) {
             if (ld.getName().equals(expectedBoardName)) {
                 Assert.assertEquals(ld.getName(), expectedBoardName);
-                break;
+                return;
             }
         }
+        Assert.fail("board was not found");
     }
 
     public static void verifyThatBoardWasDeleted(BoardDto deletedBoard) {
@@ -30,9 +31,10 @@ public class AssertionSteps {
         for (ListDto ld : listDtos) {
             if (ld.getName().equals(expectedListName)) {
                 Assert.assertEquals(ld.getName(), expectedListName);
-                break;
+                return;
             }
         }
+        Assert.fail("list was not created on board");
     }
 
     public static void verifyThatLabelColorWasUpdated(BoardDto board, String labelName,String expectedLabelColor) {

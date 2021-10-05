@@ -6,15 +6,14 @@ import com.epam.tc.dto.BoardDto;
 import com.epam.tc.dto.LabelDto;
 import com.epam.tc.dto.ListDto;
 import com.epam.tc.service.TrelloService;
-import com.epam.tc.tests.TrelloFunctionTests;
 import java.util.List;
 
 public class ActionSteps {
 
-    public static ActionSteps createBoard(String boardName) {
-        TrelloFunctionTests.boardDto = TrelloService.createBoardByName(boardName);
-        DataToRemove.boardDtosListToDelete.add(TrelloFunctionTests.boardDto);
-        return new ActionSteps();
+    public static BoardDto createBoard(String boardName) {
+        BoardDto boardDto = TrelloService.createBoardByName(boardName);
+        DataToRemove.boardDtosListToDelete.add(boardDto);
+        return boardDto;
     }
 
     static BoardDto[] getBoards() {
@@ -32,29 +31,24 @@ public class ActionSteps {
          throw new NotFoundLabelFromBoardException("Label with name " + labelName + " was not found");
     }
 
-    public static ActionSteps deleteBoard(BoardDto board) {
+    public static void deleteBoard(BoardDto board) {
         TrelloService.deleteBoardById(board.getId());
-        return new ActionSteps();
     }
 
-    public static ActionSteps createListOnBoard(BoardDto board, String listName) {
+    public static void createListOnBoard(BoardDto board, String listName) {
         TrelloService.createListOnBoard(board.getId(), listName);
-        return new ActionSteps();
     }
 
-    public static ActionSteps createLabelOnBoard(BoardDto board, String labelName) {
+    public static void createLabelOnBoard(BoardDto board, String labelName) {
         TrelloService.createLabelOnBoard(board.getId(), labelName);
-        return new ActionSteps();
     }
 
-    public static ActionSteps updateBoardName(BoardDto board, String newBoardName) {
+    public static void updateBoardName(BoardDto board, String newBoardName) {
         TrelloService.updateBoardName(board.getId(), newBoardName);
-        return new ActionSteps();
     }
 
-    public static ActionSteps updateLabelColor(BoardDto board, String labelName, String color) {
+    public static void updateLabelColor(BoardDto board, String labelName, String color) {
         TrelloService.updateLabelColor(getLabel(board, labelName).getId(), color);
-        return new ActionSteps();
     }
     static ListDto [] getListsFromBoard (BoardDto board) {
         return TrelloService.getListsFromBoard(board.getId());
